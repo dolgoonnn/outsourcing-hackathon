@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "sqlite"
+    // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
+    // Further reading:
+    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
+    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
+    url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  projects  Project[]
+  answers   Answer[]
+}
+
+model Agent {
+  id        Int       @id @default(autoincrement())
+  type      String
+  questions Question[]
+  projects Project[]
+}
+
+model Project {
+  id          Int         @id @default(autoincrement())
+  userId      Int
+  agentId     Int
+  status      String
+  user        User        @relation(fields: [userId], references: [id])
+  agent       Agent       @relation(fields: [agentId], references: [id])
+  requirements Requirement[]
+}
+
+model Question {
+  id      Int     @id @default(autoincrement())
+  agentId Int
+  content String
+  agent   Agent   @relation(fields: [agentId], references: [id])
+  answers Answer[]
+}
+
+model Answer {
+  id         Int      @id @default(autoincrement())
+  questionId Int
+  userId     Int
+  content    String
+  question   Question @relation(fields: [questionId], references: [id])
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model Requirement {
+  id        Int     @id @default(autoincrement())
+  projectId Int
+  description String
+  project   Project @relation(fields: [projectId], references: [id])
+}
