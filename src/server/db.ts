@@ -1,16 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import { Kysely } from 'kysely';
+import { NeonDialect } from 'kysely-neon';
 
-import { env } from "~/env.mjs";
+import type { DB } from '@/lib/db/types';
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
-
-export const db =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    log:
-      env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-  });
-
-if (env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+export const db = new Kysely<DB>({
+  dialect: new NeonDialect({
+    connectionString: process.env.DATABASE_URL,
+  }),
+});
