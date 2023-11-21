@@ -14,6 +14,13 @@ export const env = createEnv({
         (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
         "You forgot to change the default URL"
       ),
+    OPENAI_API_KEY:z
+      .string()
+      .url()
+      .refine(
+        (str) => !str.includes("YOUR_OPENAI_KEY_HERE"),
+        "You forgot to add open ai key"
+      ),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),

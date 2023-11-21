@@ -1,4 +1,6 @@
 import MainNavigation from '@/components/main-navigation';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import { useState } from 'react';
 
 type Answers = {
@@ -22,13 +24,17 @@ export default function Home() {
   return (
     <MainNavigation>
 
-
-      <div className="tabs">
+    <div>
+      <Link href={"/general-info"}>
+      <Button>Let&apos;s Start</Button>
+      </Link>
+    </div>
+      {/* <div className="tabs">
         <button onClick={() => setStep(1)}>Step 1</button>
         <button onClick={() => setStep(2)}>Step 2</button>
         <button onClick={() => setStep(3)}>Step 3</button>
-      </div>
-
+      </div> */}
+{/*
       {step === 1 && (
         <div>
           <h2>Step 1</h2>
@@ -60,7 +66,7 @@ export default function Home() {
           <p>Question 2: {answers.question2}</p>
           <button onClick={prevStep}>Back</button>
         </div>
-      )}
+      )} */}
     </MainNavigation>
   );
 }

@@ -12,12 +12,15 @@ import { toast } from 'sonner'
 export interface ChatProps extends React.ComponentProps<'div'> {
   initialMessages?: Message[]
   id?: string
+  initialInput?:string
 }
 
-export function Chat({ id, initialMessages, className }: ChatProps) {
+export function Chat({ id, initialMessages, className, initialInput }: ChatProps) {
 
   const { messages, append, reload, stop, isLoading, input, setInput } =
     useChat({
+      // api:"ad",
+      initialInput,
       initialMessages,
       id,
       body: {

@@ -22,8 +22,9 @@ import { questions } from "@/lib/form/questions"
 
 
 const baFormSchema = z.object({
-  question3: z.string().nonempty({ message: 'Question 3 is required' }),
-  question4: z.string().nonempty({ message: 'Question 4 is required' }),
+  question6: z.string().nonempty({ message: 'Question 6 is required' }),
+  question7: z.string().nonempty({ message: 'Question 7 is required' }),
+  question8: z.string().nonempty({ message: 'Question 8 is required' }),
 })
 
 type BaFormValues = z.infer<typeof baFormSchema>
@@ -36,16 +37,18 @@ export function BaForm() {
   const form = useForm<BaFormValues>({
     resolver: zodResolver(baFormSchema),
     defaultValues: {
-      question3: answers.question3,
-      question4: answers.question4,
+      question6: answers.question6,
+      question7: answers.question7,
+      question8: answers.question8,
       // Add more fields if needed
     },
   })
 
   async function onSubmit(data: BaFormValues) {
     const formatted = {
-      [questions.businessAnalyst.question3]: data.question3,
-      [questions.businessAnalyst.question4]: data.question4
+      [questions.businessAnalyst.question6]: data.question6,
+      [questions.businessAnalyst.question7]: data.question7,
+      [questions.businessAnalyst.question8]: data.question8
     };
     setAnswers({...answers,...data})
     setFormattedAnswers({...formattedAnswer,...formatted})
@@ -62,12 +65,12 @@ export function BaForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="question3"
+          name="question6"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{questions.businessAnalyst.question3}</FormLabel>
+              <FormLabel>{questions.businessAnalyst.question6}</FormLabel>
               <FormControl>
-                <Input placeholder="Your name" {...field} value={answers.question3} />
+                <Input placeholder="Your name" {...field} value={answers.question6} />
               </FormControl>
               <FormDescription>
                 This is the name that will be displayed on your profile and in
@@ -79,12 +82,29 @@ export function BaForm() {
         />
         <FormField
           control={form.control}
-          name="question4"
+          name="question7"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{questions.businessAnalyst.question4}</FormLabel>
+              <FormLabel>{questions.businessAnalyst.question7}</FormLabel>
               <FormControl>
-                <Input placeholder="Your name" {...field} value={answers.question4} />
+                <Input placeholder="Your name" {...field} value={answers.question7} />
+              </FormControl>
+              <FormDescription>
+                This is the name that will be displayed on your profile and in
+                emails.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+               <FormField
+          control={form.control}
+          name="question8"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{questions.businessAnalyst.question8}</FormLabel>
+              <FormControl>
+                <Input placeholder="Your name" {...field} value={answers.question8} />
               </FormControl>
               <FormDescription>
                 This is the name that will be displayed on your profile and in

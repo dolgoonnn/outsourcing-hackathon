@@ -24,6 +24,9 @@ import { questions } from "@/lib/form/questions"
 const generalFormSchema = z.object({
   question1: z.string().nonempty({ message: 'Question 1 is required' }),
   question2: z.string().nonempty({ message: 'Question 2 is required' }),
+  question3: z.string().nonempty({ message: 'Question 2 is required' }),
+  question4: z.string().nonempty({ message: 'Question 2 is required' }),
+  question5: z.string().nonempty({ message: 'Question 2 is required' }),
 })
 
 type GeneralFormValues = z.infer<typeof generalFormSchema>
@@ -41,6 +44,9 @@ export function GeneralForm() {
     defaultValues: {
       question1: answers.question1,
       question2: answers.question2,
+      question3: answers.question3,
+      question4: answers.question4,
+      question5: answers.question5,
       // Add more fields if needed
     },
   })
@@ -49,7 +55,10 @@ export function GeneralForm() {
     console.log("🚀 ~ file: general-form.tsx:45 ~ onSubmit ~ data:", data)
     const formatted = {
       [questions.generalInfo.question1]: data.question1,
-      [questions.generalInfo.question2]: data.question2
+      [questions.generalInfo.question2]: data.question2,
+      [questions.generalInfo.question3]: data.question3,
+      [questions.generalInfo.question4]: data.question4,
+      [questions.generalInfo.question5]: data.question5
     };
     setAnswers({...answers,...data})
     setFormattedAnswers({...formattedAnswer,...formatted})
@@ -77,10 +86,10 @@ export function GeneralForm() {
               <FormControl>
                 <Input placeholder="Your name" {...field} value={answers.question1} />
               </FormControl>
-              <FormDescription>
+              {/* <FormDescription>
                 This is the name that will be displayed on your profile and in
                 emails.
-              </FormDescription>
+              </FormDescription> */}
               <FormMessage />
             </FormItem>
           )}
@@ -94,10 +103,62 @@ export function GeneralForm() {
               <FormControl>
                 <Input placeholder="Your name" {...field} value={answers.question2} />
               </FormControl>
-              <FormDescription>
+              {/* <FormDescription>
                 This is the name that will be displayed on your profile and in
                 emails.
-              </FormDescription>
+              </FormDescription> */}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+         <FormField
+          control={form.control}
+          name="question3"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{questions.generalInfo.question3}</FormLabel>
+              <FormControl>
+                <Input placeholder="Your name" {...field} value={answers.question3} />
+              </FormControl>
+              {/* <FormDescription>
+                This is the name that will be displayed on your profile and in
+                emails.
+              </FormDescription> */}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+         <FormField
+          control={form.control}
+          name="question4"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{questions.generalInfo.question4}</FormLabel>
+              <FormControl>
+                <Input placeholder="Your name" {...field} value={answers.question4} />
+              </FormControl>
+              {/* <FormDescription>
+                This is the name that will be displayed on your profile and in
+                emails.
+              </FormDescription> */}
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+           <FormField
+          control={form.control}
+          name="question5"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{questions.generalInfo.question5}</FormLabel>
+              <FormControl>
+                <Input placeholder="Your name" {...field} value={answers.question5} />
+              </FormControl>
+              {/* <FormDescription>
+                This is the name that will be displayed on your profile and in
+                emails.
+              </FormDescription> */}
               <FormMessage />
             </FormItem>
           )}
