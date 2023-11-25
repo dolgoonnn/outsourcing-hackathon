@@ -53,11 +53,10 @@ export default async function POST(req: NextApiRequest,res:NextApiResponse) {
   const response = await openai.chat.completions.create({
     model: 'gpt-4',
     messages: [systemMessage, ...messages],
-    temperature: 0.2,
+    temperature: 0.5,
     stream: true,
     // prompt: prompt
   })
-  console.log("🚀 ~ file: chat.ts:60 ~ POST ~ response:", response)
   if(messages === undefined){
     return res.status(500)
   }

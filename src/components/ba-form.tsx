@@ -53,7 +53,7 @@ export function BaForm() {
     setAnswers({...answers,...data})
     setFormattedAnswers({...formattedAnswer,...formatted})
     nextStep()
-   await router.push('/agents')
+   await router.push('/stories')
   }
   async function onStepBack(){
     await router.push('/general-info')

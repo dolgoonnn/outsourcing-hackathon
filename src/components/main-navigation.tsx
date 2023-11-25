@@ -12,6 +12,10 @@ const sidebarNavItems = [
     href: "/ba-questions",
   },
   {
+    title: "User stories",
+    href: "/stories",
+  },
+  {
     title: "Agents",
     href: "/agents",
   },
