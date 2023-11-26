@@ -35,7 +35,7 @@ export default function SettingsAccountPage() {
     });
   };
   useEffect(() => {
-    if (messages.length == 0) {
+    if (messages.length == 0 && storyChat.length == 0) {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       handleTrigger();
     } else if (messages.length > 0 && !isLoading) {
@@ -61,7 +61,7 @@ export default function SettingsAccountPage() {
               : filterMessagesByRole(messages, "assistant")
           }
         />
-        {messages.length !== 0 && storyChat.length !== 0 && !isLoading && (
+        {(messages.length !== 0 || storyChat.length !== 0) && !isLoading && (
           <StoriesForm />
         )}
       </div>

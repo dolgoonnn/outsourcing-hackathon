@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { useStore } from "@/lib/form/store";
 import { useRouter } from "next/router";
 import { questions } from "@/lib/form/questions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Icons } from "./ui/icons";
 import { type Message } from "ai";
 
@@ -67,6 +67,12 @@ export function StoriesForm() {
     },
   });
 
+  useEffect(() => {
+    if (answers.question9 && answers.question9.length !== 0) {
+      setInputs(answers.question9);
+    }
+  }, [answers]);
+
   async function onSubmit() {
     // console.log("🚀 ~ file: general-form.tsx:45 ~ onSubmit ~ data:", data);
     // const data: Record<string, string[]> = {
@@ -75,10 +81,7 @@ export function StoriesForm() {
     const formatted = {
       [questions.userStories.question9]: inputs,
     };
-    console.log(
-      "🚀 ~ file: stories-form.tsx:72 ~ onSubmit ~ formatted:",
-      formatted,
-    );
+
     setAnswers({ ...answers, question9: inputs });
     setFormattedAnswers({ ...formattedAnswer, ...formatted });
     nextStep();

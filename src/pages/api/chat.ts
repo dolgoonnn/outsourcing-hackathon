@@ -54,7 +54,7 @@ export default async function POST(req: NextApiRequest,res:NextApiResponse) {
     model: 'gpt-4',
     messages: [systemMessage, ...messages],
     temperature: 0.5,
-    stream: true,
+  stream: true,
     // prompt: prompt
   })
   if(messages === undefined){
