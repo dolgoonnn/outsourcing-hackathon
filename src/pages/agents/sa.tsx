@@ -34,7 +34,12 @@ export default function SettingsAccountPage() {
           </p>
         </div>
         <Separator />
-        <Chat id={id} initialInput={initialInput} />
+        <Chat
+          id={id}
+          initialInput={initialInput}
+          agent="sa"
+          initialMessages={[]}
+        />
         {/* <GeneralForm /> */}
       </div>
     </MainNavigation>

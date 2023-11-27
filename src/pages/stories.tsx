@@ -11,13 +11,13 @@ import { ChatList } from "@/components/chat-list";
 import { Message } from "ai";
 
 export default function SettingsAccountPage() {
-  const [savedMessages, setSavedMessages] = useState<Message[]>([]);
+  // const [savedMessages, setSavedMessages] = useState<Message[]>([]);
   const { messages, handleSubmit, isLoading, append } = useChat({
     api: "/api/story",
   });
 
-  const { formattedAnswer, storyChat, setStoryChat } = useStore();
-  // console.log("🚀 ~ file: stories.tsx:20 ~ formattedAnswer:", formattedAnswer);
+  const { formattedAnswer, answers, storyChat, setStoryChat } = useStore();
+  console.log("🚀 ~ file: stories.tsx:20 ~ formattedAnswer:", formattedAnswer);
 
   const handleTrigger = async () => {
     const id = nanoid();
@@ -35,14 +35,22 @@ export default function SettingsAccountPage() {
     });
   };
   useEffect(() => {
-    if (messages.length == 0 && storyChat.length == 0) {
+    if (
+      messages.length == 0 &&
+      storyChat.length == 0 &&
+      answers.question1 != undefined
+    ) {
+      console.log(
+        "🚀 ~ file: stories.tsx:43 ~ useEffect ~  formattedAnswer.question1:",
+        answers.question1,
+      );
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       handleTrigger();
     } else if (messages.length > 0 && !isLoading) {
-      setSavedMessages(filterMessagesByRole(messages, "assistant"));
+      // setSavedMessages(filterMessagesByRole(messages, "assistant"));
       setStoryChat(filterMessagesByRole(messages, "assistant"));
     }
-  }, [messages, isLoading]);
+  }, [messages, isLoading, storyChat.length, formattedAnswer]);
   return (
     <MainNavigation>
       <div className="space-y-6">

@@ -7,11 +7,14 @@ import { ChatPanel } from "@/components/chat-panel";
 import { ChatScrollAnchor } from "@/components/chat-scroll-anchor";
 
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 export interface ChatProps extends React.ComponentProps<"div"> {
-  initialMessages?: Message[];
+  initialMessages: Message[];
   id?: string;
-  initialInput?: string;
+  initialInput: string;
+  agent?: string;
+  setPoChat: (poChat: Message[]) => void;
 }
 
 export function Chat({
@@ -19,6 +22,8 @@ export function Chat({
   initialMessages,
   className,
   initialInput,
+  agent,
+  setPoChat,
 }: ChatProps) {
   const { messages, append, reload, stop, isLoading, input, setInput } =
     useChat({
@@ -35,12 +40,30 @@ export function Chat({
         }
       },
     });
+  const handleTrigger = async () => {
+    await append({
+      id,
+      content: initialInput,
+      role: "user",
+    });
+  };
+  useEffect(() => {
+    setInput("");
+    if (messages.length == 0 && initialMessages.length == 0) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      handleTrigger();
+    } else if (messages.length > 0 && !isLoading) {
+      // setSavedMessages(filterMessagesByRole(messages, "assistant"));
+      setPoChat(messages);
+    }
+  }, [messages, isLoading, initialMessages.length]);
+  const restOfMessages = messages.slice(1);
   return (
     <>
-      <div className={cn("pb-[200px] pt-4 md:pt-10", className)}>
+      <div className={cn("pb-[250px] pt-4 md:pt-10", className)}>
         {/* {messages.length ? ( */}
         <>
-          <ChatList messages={messages} />
+          <ChatList messages={restOfMessages} />
           <ChatScrollAnchor trackVisibility={isLoading} />
         </>
         {/* // ) : (

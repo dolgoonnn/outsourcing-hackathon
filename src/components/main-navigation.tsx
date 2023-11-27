@@ -1,6 +1,6 @@
-import { Separator } from "./ui/separator"
-import { SidebarNav } from "./ui/sidebar-nav"
-import Image from "next/image"
+import { Separator } from "./ui/separator";
+import { SidebarNav } from "./ui/sidebar-nav";
+import Image from "next/image";
 
 const sidebarNavItems = [
   {
@@ -19,11 +19,22 @@ const sidebarNavItems = [
     title: "Agents",
     href: "/agents",
   },
-
-]
+  {
+    title: "Budget calculation",
+    href: "/budget",
+  },
+  // {
+  //   title: "Agents",
+  //   href: "/agents",
+  // },
+  // {
+  //   title: "Agents",
+  //   href: "/agents",
+  // },
+];
 
 interface SettingsLayoutProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export default function MainNavigation({ children }: SettingsLayoutProps) {
@@ -47,9 +58,14 @@ export default function MainNavigation({ children }: SettingsLayoutProps) {
       </div>
       <div className="hidden space-y-6 p-10 pb-16 md:block">
         <div className="space-y-0.5">
-          <h2 className="text-2xl font-bold tracking-tight">AI-Based Outsourcing Solution</h2>
+          <h2 className="text-2xl font-bold tracking-tight">
+            AI-Based Outsourcing Solution
+          </h2>
           <p className="text-muted-foreground">
-          This project aims to assist users who lack IT project experience but need a web or app for their business. The solution will guide users through the process of defining their project requirements through interactions with AI agents.
+            This project aims to assist users who lack IT project experience but
+            need a web or app for their business. The solution will guide users
+            through the process of defining their project requirements through
+            interactions with AI agents.
           </p>
         </div>
         <Separator className="my-6" />
@@ -60,8 +76,7 @@ export default function MainNavigation({ children }: SettingsLayoutProps) {
           </aside>
           <div className="flex-1 lg:max-w-2xl">{children}</div>
         </div>
-
-        </div>
+      </div>
     </>
-  )
+  );
 }
