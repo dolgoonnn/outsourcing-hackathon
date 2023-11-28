@@ -13,10 +13,21 @@ import { Message } from "ai";
 export default function SettingsAccountPage() {
   const [savedMessages, setSavedMessages] = useState<Message[]>([]);
   const [triggerCalled, setTriggerCalled] = useState(false);
+  const [finished, setFinished] = useState(false);
 
   const [timeArray, setTimeArray] = useState<string[]>([]);
   const { messages, handleSubmit, isLoading, append } = useChat({
     api: "/api/time",
+    async onFinish() {
+      console.log("finished");
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log("finished with awaited");
+      setFinished(true);
+    },
+
+    // onFinish(message) {
+    //   console.log("🚀 ~ file: budget.tsx:28 ~ onFinish ~ message:", message);
+    // },
   });
   console.log("🚀 ~ file: budget.tsx:19 ~ messages:", messages);
 
@@ -39,12 +50,7 @@ export default function SettingsAccountPage() {
   };
 
   useEffect(() => {
-    if (
-      answers.question9 != undefined &&
-      !isLoading &&
-      !triggerCalled &&
-      answers.question9
-    ) {
+    if (answers.question9 != undefined && !isLoading && !triggerCalled) {
       // answers.question9.forEach((story) => {
       setTriggerCalled(true);
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -107,7 +113,8 @@ export default function SettingsAccountPage() {
               : filterMessagesByRole(messages, "assistant")
           }
         /> */}
-        {!isLoading &&
+        {finished &&
+          !isLoading &&
           answers.question9?.map((story, index) => {
             const filteredMessages = filterMessagesByRole(
               messages,

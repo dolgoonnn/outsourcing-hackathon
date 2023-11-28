@@ -6,7 +6,7 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
-
+import Credentials from "next-auth/providers/credentials";
 import { env } from "@/env.mjs";
 import { db } from "@/server/db";
 
@@ -46,11 +46,51 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   },
-  adapter: PrismaAdapter(db),
+  // adapter: PrismaAdapter(db),
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
+    Credentials({
+      name: "credentials",
+      credentials: {
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "jsmith@gmail.com",
+        },
+        password: { label: "Password", type: "password" },
+      },
+      authorize: (credentials) => {
+        // try {
+        //   console.log("🚀 ~ file: auth.ts:24 ~ credentials:", credentials);
+        //   const { email, password } = await loginSchema.parseAsync(credentials);
+        //   console.log("🚀 ~ file: auth.ts:24 ~ email:", email);
+
+        //   // const result = await prisma.user.findFirst({
+        //   //   where: { email },
+        //   // });
+        //   const result = await db
+        //     .selectFrom("User")
+        //     .where("email", "=", email)
+        //     .selectAll()
+        //     .executeTakeFirst();
+        //   console.log("🚀 ~ file: auth.ts:33 ~ result:", result);
+
+        //   if (!result || !result.password) return null;
+
+        //   const isValidPassword = await verify(result.password, password);
+
+        //   if (!isValidPassword) return null;
+
+        //   return {
+        //     id: result.id,
+        //     email,
+        //     userType: result.type,
+        //     role: result.role,
+        //   };
+        // } catch {
+        //   return null;
+        // }
+        return null;
+      },
     }),
     /**
      * ...add more providers here.
