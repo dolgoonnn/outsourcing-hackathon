@@ -33,7 +33,9 @@ type State = {
 
 export const useStore = create<State>((set) => ({
   step: 1,
-  answers: { question9: [] },
+  answers: {
+    question9: [],
+  },
   formattedAnswer: {},
   setAnswers: (answers) => set((state) => ({ ...state, answers })),
   setFormattedAnswers: (formattedAnswer) =>

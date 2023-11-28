@@ -16,8 +16,16 @@ const sidebarNavItems = [
     href: "/stories",
   },
   {
-    title: "Agents",
+    title: "PO Agent",
     href: "/agents",
+  },
+  {
+    title: "BA Agent",
+    href: "/agents/ba",
+  },
+  {
+    title: "SA Agent",
+    href: "/agents/sa",
   },
   {
     title: "Budget calculation",
