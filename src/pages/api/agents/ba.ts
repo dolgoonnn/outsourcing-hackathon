@@ -26,7 +26,13 @@ const configuration = new Configuration({
 // const openai = new OpenAIApi(configuration)
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-export default async function POST(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
+  if (req.method !== "POST") {
+    return res.status(404);
+  }
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   // Use type assertion for the whole req object
   const reqWithJson = req as unknown as { json: () => Promise<JsonRequest> };
