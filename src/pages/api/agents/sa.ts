@@ -26,13 +26,7 @@ const configuration = new Configuration({
 // const openai = new OpenAIApi(configuration)
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  if (req.method !== "POST") {
-    return res.status(404);
-  }
+export default async function POST(req: NextApiRequest, res: NextApiResponse) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   // Use type assertion for the whole req object
   const reqWithJson = req as unknown as { json: () => Promise<JsonRequest> };
@@ -99,3 +93,14 @@ export default async function handler(
 
   return new StreamingTextResponse(stream);
 }
+
+export const parseCodeFromMessage = () => {
+  const customInput = `
+  sequenceDiagram\n participant MarketingManager as "Marketing Manager"\n participant MarketingEnthusiast as "Marketing Enthusiast"\n participant ProductOwner as "Product Owner"\n participant User as "User"\n participant BusinessOwner as "Business Owner"\n participant Marketer as "Marketer"\n\n MarketingManager->ProductOwner: Implement effective marketing activities\n MarketingEnthusiast->MarketingManager: Learn effective marketing strategies\n ProductOwner->Platform: Register product or service information\n User->Platform: Access registered information\n BusinessOwner->Platform: Receive marketing suggestions\n Marketer->Platform: Gather and suggest up-to-date information\n User->Platform: Use user-friendly interface\n MarketingProfessional->Platform: Use analytics tools\n BusinessOwner->Platform: Set up notification preferences\n User->Platform: Receive continuous updates and adaptions`;
+
+  // const regex = /```(?:mermaid)?\s*([\s\S]*?)```/;
+  // const match = customInput.match(regex);
+
+  
+    return customInput;
+};

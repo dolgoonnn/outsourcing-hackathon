@@ -6,7 +6,8 @@ import { Chat } from "@/components/chat";
 import { Message } from "ai";
 import { useStore } from "@/lib/form/store";
 import { SaChat } from "@/components/chat/sa-chat";
-
+import {Mermaid} from "../agents/mermaid";
+import { parseCodeFromMessage } from "../api/agents/sa";
 export default function SettingsAccountPage() {
   const id = nanoid();
   const { formattedAnswer, answers, saChat, setSaChat } = useStore();
@@ -44,6 +45,9 @@ export default function SettingsAccountPage() {
             setSaChat={setSaChat}
           />
         )}
+        <Mermaid chart ={parseCodeFromMessage()}/>
+        {/* end response iin orond ai iin uusgesn sequence iin code orno */}
+        
         {/* <GeneralForm /> */}
       </div>
     </MainNavigation>
