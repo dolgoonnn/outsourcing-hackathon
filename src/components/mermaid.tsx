@@ -21,7 +21,8 @@ export function Mermaid({ chart }: MermaidProps) {
   async function drawChart(chart: string) {
     const theme = "default";
     const container = ref.current;
-    if (chart !== "" && container ) {
+  
+    if (chart !== "" && container) {
       container.removeAttribute("data-processed");
       mermaid.mermaidAPI.initialize({
         startOnLoad: false,
@@ -29,13 +30,28 @@ export function Mermaid({ chart }: MermaidProps) {
         theme,
         logLevel: 5,
       });
-      await mermaid.run();
+  
+      try {
+        await mermaid.run();
+      } catch (error) {
+        // Handle the error if needed
+        console.error("Error drawing chart:", error);
+      }
     }
   }
+  
 
   useEffect(() => {
-    drawChart(chart);
+    const drawChartAsync = async () => {
+      await drawChart(chart);
+    };
+  
+    drawChartAsync().catch((error) => {
+      // Handle the error if needed
+      console.error("Error in useEffect:", error);
+    });
   }, [chart]);
+  
 
   return (
     <div className="w-full">
