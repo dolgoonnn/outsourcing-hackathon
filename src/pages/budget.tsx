@@ -8,6 +8,19 @@ import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Icons } from "@/components/icons";
 import { filterMessagesByRole } from "@/lib/utils";
+import Image from "next/image";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 export default function SettingsAccountPage() {
   const [savedMessages, setSavedMessages] = useState<Message[]>([]);
@@ -30,9 +43,10 @@ export default function SettingsAccountPage() {
 
   const { formattedAnswer, storyChat, setStoryChat, answers } = useStore();
   console.log(
-    "🚀 ~ file: budget.tsx:32 ~ SettingsAccountPage ~ answers:",
-    answers,
+    "🚀 ~ file: budget.tsx:45 ~ SettingsAccountPage ~ formattedAnswer:",
+    formattedAnswer,
   );
+
   // console.log("🚀 ~ file: stories.tsx:20 ~ formattedAnswer:", formattedAnswer);
 
   const handleTrigger = async (text: string) => {
@@ -73,6 +87,25 @@ export default function SettingsAccountPage() {
   function formatNumberWithCommas(number: number) {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
   }
+
+  const companies = [
+    {
+      id: "1",
+      imageUrl: "/og.png",
+      title: "Nasha tech",
+      email: "sales@nashatech.com",
+      description:
+        "As a forward-thinking technology company, we are committed to delivering high-quality software development services.",
+    },
+    {
+      id: "1",
+      imageUrl: "/og.png",
+      email: "sales@tsashatech.com",
+      title: "Tsasha tech",
+      description:
+        "We are a dynamic, innovative and well-established company. Our goal is to create value for our clients by delivering cutting-edge solutions and services.",
+    },
+  ];
 
   return (
     <MainNavigation>
@@ -137,6 +170,17 @@ export default function SettingsAccountPage() {
             </div>
           </div>
         )}
+        {!isLoading && (
+          <>
+            <div className="py-4 text-2xl">Suggested company</div>
+
+            <div className="grid grid-cols-2 gap-4">
+              {companies.map((card, index) => (
+                <CompanyCard key={index} cardData={card} />
+              ))}
+            </div>
+          </>
+        )}
         {/* <div className="w-full flex justify-start">
           <div className="">Project Name: {answers.question1}</div>
         </div> */}
@@ -144,21 +188,53 @@ export default function SettingsAccountPage() {
     </MainNavigation>
   );
 }
+type CardData = {
+  id: string;
+  imageUrl: string;
+  title: string;
+  description: string;
+  email: string;
+};
 
-function Quote({
-  story,
-  time,
-  cost,
-}: {
-  story: string;
-  time: string;
-  cost: number;
-}) {
+function CompanyCard({ cardData }: { cardData: CardData }) {
+  const { imageUrl, title, description, id, email } = cardData;
   return (
-    <div>
-      <h2>{story}</h2>
-      <p>Estimated Time: {time} hours</p>
-      <p>Cost: ₮{cost}</p>
+    <div className="p-6 flex flex-col rounded-xl border border-slate-500 bg-slate-800 relative">
+      <Image
+        src={imageUrl}
+        height={64}
+        width={64}
+        alt="logo"
+        className="absolute top-12 left-4 "
+      />
+      <div className="h-[92px]"></div>
+
+      <div className="flex flex-col gap-4">
+        <div className="text-base text-bold">{title}</div>
+        <div className="text-sm text-slate-100">{description}</div>
+      </div>
+      <div className="pt-4">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button>Send</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Send</DialogTitle>
+              <DialogDescription className="pt-4">
+                Company: {title}
+              </DialogDescription>
+              <DialogDescription className="pt-4">
+                Email: {email}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="py-4"></div>
+            <DialogFooter>
+              <Button type="submit">Send this info</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }

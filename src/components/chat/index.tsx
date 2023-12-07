@@ -8,6 +8,7 @@ import { ChatScrollAnchor } from "@/components/chat-scroll-anchor";
 
 import { toast } from "sonner";
 import { useEffect } from "react";
+import { useStore } from "@/lib/form/store";
 
 export interface ChatProps extends React.ComponentProps<"div"> {
   initialMessages: Message[];
@@ -40,6 +41,8 @@ export function Chat({
         }
       },
     });
+
+  const { nextStep } = useStore();
   const handleTrigger = async () => {
     await append({
       id,
@@ -55,6 +58,7 @@ export function Chat({
     } else if (messages.length > 0 && !isLoading) {
       // setSavedMessages(filterMessagesByRole(messages, "assistant"));
       setPoChat(messages);
+      nextStep();
     }
   }, [messages, isLoading, initialMessages.length]);
   const restOfMessages = messages.slice(1);

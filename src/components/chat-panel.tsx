@@ -35,7 +35,7 @@ export function ChatPanel({
       <ButtonScrollToBottom />
       <div className="grid grid-cols-12">
         {/* <div className="col-span-4"></div> */}
-        <div className="mx-auto w-[70%]  sm:px-4 col-start-3 col-span-10">
+        <div className="mx-auto w-[70%]  sm:px-4 col-start-4 col-span-10">
           <div className="flex items-center justify-center h-10">
             {isLoading ? (
               <Button

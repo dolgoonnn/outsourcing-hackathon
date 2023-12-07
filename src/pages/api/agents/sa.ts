@@ -93,14 +93,3 @@ export default async function POST(req: NextApiRequest, res: NextApiResponse) {
 
   return new StreamingTextResponse(stream);
 }
-
-export const parseCodeFromMessage = () => {
-  const customInput = `
-  sequenceDiagram\n participant MarketingManager as "Marketing Manager"\n participant MarketingEnthusiast as "Marketing Enthusiast"\n participant ProductOwner as "Product Owner"\n participant User as "User"\n participant BusinessOwner as "Business Owner"\n participant Marketer as "Marketer"\n\n MarketingManager->ProductOwner: Implement effective marketing activities\n MarketingEnthusiast->MarketingManager: Learn effective marketing strategies\n ProductOwner->Platform: Register product or service information\n User->Platform: Access registered information\n BusinessOwner->Platform: Receive marketing suggestions\n Marketer->Platform: Gather and suggest up-to-date information\n User->Platform: Use user-friendly interface\n MarketingProfessional->Platform: Use analytics tools\n BusinessOwner->Platform: Set up notification preferences\n User->Platform: Receive continuous updates and adaptions`;
-
-  // const regex = /```(?:mermaid)?\s*([\s\S]*?)```/;
-  // const match = customInput.match(regex);
-
-  
-    return customInput;
-};

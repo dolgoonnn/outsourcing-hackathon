@@ -8,6 +8,7 @@ import { ChatScrollAnchor } from "@/components/chat-scroll-anchor";
 
 import { toast } from "sonner";
 import { useEffect } from "react";
+import { Mermaid } from "@/components/mermaid";
 
 export interface ChatProps extends React.ComponentProps<"div"> {
   initialMessages: Message[];
@@ -69,8 +70,12 @@ export function SaChat({
         {/* // ) : (
         //   <EmptyScreen setInput={setInput} />
         // )} */}
+        {!isLoading && messages.length > 0 && (
+          <Mermaid chart={restOfMessages[0]?.content} />
+        )}
       </div>
-      <ChatPanel
+
+      {/* <ChatPanel
         id={id}
         isLoading={isLoading}
         stop={stop}
@@ -79,7 +84,7 @@ export function SaChat({
         messages={messages}
         input={input}
         setInput={setInput}
-      />
+      /> */}
     </>
   );
 }
