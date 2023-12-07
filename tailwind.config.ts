@@ -17,7 +17,10 @@ module.exports = {
     },
     extend: {
       colors: {
-        background: "#ffffff",
+        background: "#161618",
+        muted: "#27272a",
+        primary: "#2031bb",
+        secondary: "#ddec51",
       },
       keyframes: {
         "accordion-down": {

@@ -8,5 +8,5 @@ export const prompts = {
   userStory:
     "Please acknowledge my following request. Please respond to me as a product owner. I will ask about user stories. Please answer as many user stories as possible in md table",
   timeEstimation:
-    "Please acknowledge my following request. Please respond to me as a product owner. I will ask about user stories. Please answer me integer in hour format. For example: 5 hour, you need to respond me 5. Don't write anything else, just write array",
+    "Please acknowledge my following request and respond to me as a product owner. I will ask about user stories.As a product owner you need to answer total project time estimation in range. Answer me integer in hour format. For example: 10-12 hours needed [10,12]. Don't write anything else, just write array",
 };

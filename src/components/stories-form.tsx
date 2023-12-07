@@ -52,7 +52,6 @@ export function StoriesForm() {
   const handleAddClick = () => {
     setInputs([...inputs, ""]);
   };
-
   const handleRemoveClick = (index: number) => {
     const values = [...inputs];
     values.splice(index, 1);
@@ -98,7 +97,10 @@ export function StoriesForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-8 max-w-2xl mx-auto"
+      >
         {/* <FormField
           control={form.control}
           name="question9"

@@ -5,10 +5,12 @@ import { type AppType } from "next/app";
 import { api } from "@/utils/api";
 import { Toaster } from "@/components/ui/toaster";
 
-import { TooltipProvider } from '@/components/ui/tooltip'
-
+// import Them
 
 import "@/styles/globals.css";
+import { ThemeProvider } from "@/components/providers";
+import Footer from "@/components/footer";
+import { SiteHeader } from "@/components/layout/site-header";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -16,11 +18,17 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <Toaster/>
-      <TooltipProvider>
-
-      <Component {...pageProps} />
-      </TooltipProvider>
+      <Toaster />
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="dark"
+        enableSystem
+        disableTransitionOnChange
+      >
+        <SiteHeader />
+        <Component {...pageProps} />
+      </ThemeProvider>
+      {/* <Footer /> */}
     </SessionProvider>
   );
 };

@@ -30,10 +30,14 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
           "flex h-8 w-8 shrink-0 select-none items-center justify-center rounded-md border shadow",
           message.role === "user"
             ? "bg-background"
-            : "bg-primary text-primary-foreground",
+            : "bg-secondary text-primary-foreground",
         )}
       >
-        {message.role === "user" ? <Icons.IconUser /> : <Icons.IconOpenAI />}
+        {message.role === "user" ? (
+          <Icons.IconUser />
+        ) : (
+          <Icons.brain className="stroke-slate-900" />
+        )}
       </div>
       <div className="flex-1 px-1 ml-4 space-y-2 overflow-hidden">
         <MemoizedReactMarkdown

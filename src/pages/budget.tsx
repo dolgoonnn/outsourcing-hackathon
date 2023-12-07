@@ -1,14 +1,13 @@
 import MainNavigation from "@/components/main-navigation";
-import { Separator } from "@/components/ui/separator";
-import { BaForm } from "@/components/ba-form";
-import { StoriesForm } from "@/components/stories-form";
 import { useEffect, useState } from "react";
-import type { SyntheticEvent } from "react";
 import { useChat } from "ai/react";
 import { useStore } from "@/lib/form/store";
-import { filterMessagesByRole, nanoid } from "@/lib/utils";
-import { ChatList } from "@/components/chat-list";
+import { nanoid } from "@/lib/utils";
 import { Message } from "ai";
+import { Slider } from "@/components/ui/slider";
+import { Badge } from "@/components/ui/badge";
+import { Icons } from "@/components/icons";
+import { filterMessagesByRole } from "@/lib/utils";
 
 export default function SettingsAccountPage() {
   const [savedMessages, setSavedMessages] = useState<Message[]>([]);
@@ -19,9 +18,7 @@ export default function SettingsAccountPage() {
   const { messages, handleSubmit, isLoading, append } = useChat({
     api: "/api/time",
     async onFinish() {
-      console.log("finished");
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log("finished with awaited");
       setFinished(true);
     },
 
@@ -32,6 +29,10 @@ export default function SettingsAccountPage() {
   console.log("🚀 ~ file: budget.tsx:19 ~ messages:", messages);
 
   const { formattedAnswer, storyChat, setStoryChat, answers } = useStore();
+  console.log(
+    "🚀 ~ file: budget.tsx:32 ~ SettingsAccountPage ~ answers:",
+    answers,
+  );
   // console.log("🚀 ~ file: stories.tsx:20 ~ formattedAnswer:", formattedAnswer);
 
   const handleTrigger = async (text: string) => {
@@ -65,65 +66,31 @@ export default function SettingsAccountPage() {
     }
   }, [answers]);
 
-  const costPerUnitTime = 30000;
-  // useEffect(() => {
-  //   if (
-  //     messages.length !== 0 &&
-  //     !isLoading &&
-  //     answers.question9 &&
-  //     messages.length == answers.question9.length
-  //   ) {
-  //     const newTimeArray = [...timeArray];
-  //     messages.forEach((message) => {
-  //       if (
-  //         message.role === "assistant" &&
-  //         !timeArray.includes(message.content)
-  //       ) {
-  //         const timeEstimation = parseInt(message.content);
-  //         const estimatedCost = timeEstimation * costPerUnitTime;
+  const costPerUnitTime = 50000;
 
-  //         newTimeArray.push(estimatedCost.toString());
-  //         console.log(`Estimated cost for the user story: $${estimatedCost}`);
-  //       }
-  //     });
-  //     setTimeArray(newTimeArray);
-  //   }
-  // }, [messages, isLoading]); // Removed timeArray from the dependencies
   let totalCost = 0;
-  console.log(
-    "🚀 ~ file: budget.tsx:107 ~ SettingsAccountPage ~ isLoading:",
-    isLoading,
-  );
+
+  function formatNumberWithCommas(number: number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+  }
 
   return (
     <MainNavigation>
       <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-medium">Account</h3>
-          <p className="text-sm text-muted-foreground">
-            Update your account settings. Set your preferred language and
-            timezone.
-          </p>
-        </div>
-        <Separator />
-        {/* <ChatList
-          messages={
-            messages.length == 0
-              ? storyChat
-              : filterMessagesByRole(messages, "assistant")
-          }
-        /> */}
-        {finished &&
-          !isLoading &&
-          answers.question9?.map((story, index) => {
+        <div className="py-8 text-2xl">Cost estimation</div>
+
+        {!isLoading ? (
+          finished &&
+          (() => {
             const filteredMessages = filterMessagesByRole(
               messages,
               "assistant",
             );
 
-            if (filteredMessages.length == 0) {
-              return "";
+            if (filteredMessages.length === 0) {
+              return null;
             }
+
             let contentArray = [];
             try {
               contentArray = JSON.parse(
@@ -131,25 +98,48 @@ export default function SettingsAccountPage() {
               ) as string[];
             } catch (error) {
               console.log("Error parsing content array:", error);
-              return ""; // or handle the error as needed
+              return null; // or handle the error as needed
             }
-            if (!Array.isArray(JSON.parse(filteredMessages[0].content))) {
-              return "";
-            }
-            // const contentArray = JSON.parse(
-            //   filteredMessages[0].content,
-            // ) as string[];
 
-            // Assuming messages[0] is the desired message, adjust this part accordingly
-            const time = filteredMessages.length > 0 ? contentArray[index] : "";
+            if (!Array.isArray(contentArray)) {
+              return null;
+            }
+
+            const time = filteredMessages.length > 0 ? contentArray[0] : "";
+
+            const time2 = filteredMessages.length > 0 ? contentArray[1] : "";
             const cost = parseInt(time) * costPerUnitTime;
+            const cost2 = parseInt(time2) * costPerUnitTime;
             totalCost += cost;
-            return <Quote key={index} story={story} time={time} cost={cost} />;
-          })}
-        <div className="py-8 text-2xl">Total cost ₮{totalCost}</div>
-        {/* {(messages.length !== 0 || storyChat.length !== 0) && !isLoading && (
-          <StoriesForm />
-        )} */}
+
+            return (
+              <div className="flex flex-col gap-8">
+                <Slider defaultValue={[28, 70]} />
+                <div className="grid grid-cols-10">
+                  <div className="col-start-3">
+                    <Badge>{formatNumberWithCommas(cost)}₮</Badge>
+                  </div>
+                  <div className="col-start-7">
+                    <Badge>{formatNumberWithCommas(cost2)}₮</Badge>
+                  </div>
+                </div>
+              </div>
+            );
+          })()
+        ) : (
+          <div className="w-full h-[100px] flex items-center justify-center">
+            <div className="flex flex-col gap-4 justify-center items-center">
+              <Icons.spinner
+                className="w-8 h-8 md:mr-2 animate-spin "
+                aria-hidden="true"
+              />
+              <div>Loading</div>
+            </div>
+          </div>
+        )}
+        {/* <div className="w-full flex justify-start">
+          <div className="">Project Name: {answers.question1}</div>
+        </div> */}
       </div>
     </MainNavigation>
   );

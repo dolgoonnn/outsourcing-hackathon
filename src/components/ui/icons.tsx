@@ -60,6 +60,9 @@ import {
   X,
   ClipboardCheck,
   ShieldCheck,
+  Brain,
+  CheckCircle2,
+  CircleDashed,
   // type Icon as LucideIcon,
   type LucideProps,
 } from "lucide-react";
@@ -129,6 +132,9 @@ export const Icons = {
   info: Info,
   shieldCheck: ShieldCheck,
   accessories: HardHat,
+  brain: Brain,
+  checkedCircle: CheckCircle2,
+  dashedCircle: CircleDashed,
   // placeholder: ImageIcon,
   coupon: (props: LucideProps) => (
     <svg
