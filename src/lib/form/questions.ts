@@ -1,18 +1,18 @@
 export const questions = {
   generalInfo: {
-    question1: "Та ямар салбарт үйл ажиллагаа явуулах сонирхолтой байгаа вэ?",
+    question1: "What industry or sector are you interested in operating in?",
     question2:
-      "Таны сонирхож байгаа төсөл ( санаа ) нь хувь хүнд чиглэсэн үү эсвэл байгууллагад уу?",
-    question3: "Таны төсөл ( санаа ) нь ямар асуудал шийдвэрлэж байна вэ?",
-    question4: "Тухайн асуудлыг нь дэлгэрэнгүй тайлбарлана уу?",
-    question5: "Та юу хийлгэхийг хүсэж байна вэ?",
+      "Is your project/idea targeted towards individuals or businesses (B2C or B2B)?",
+    question3: "What problem does your project/idea solve?",
+    question4: "Could you explain this problem in detail?",
+    question5: "What specific solution would you like to have built?",
   },
   businessAnalyst: {
-    question6: "Тухайн системийн эцсийн хэрэглэгч хэн бэ?",
-    question7: "Алсын хараа юу вэ?",
-    question8: "Хэр хугацаанд хийлгэхийг хүсэж байна вэ?",
+    question6: "Who are the end users of this system?",
+    question7: "What is your long-term vision for this project?",
+    question8: "What is your desired timeline for completion?",
   },
   userStories: {
-    question9: "Миний төсөлд байх user story-нууд",
+    question9: "User stories for my project",
   },
 };

@@ -1,69 +1,63 @@
 import MainNavigation from "@/components/main-navigation";
-import { Separator } from "@/components/ui/separator";
-import { BaForm } from "@/components/ba-form";
-import { StoriesForm } from "@/components/stories-form";
-import { useEffect, useState } from "react";
-import type { SyntheticEvent } from "react";
+import { useEffect, useRef } from "react";
 import { useChat } from "ai/react";
 import { useStore } from "@/lib/form/store";
 import { filterMessagesByRole, nanoid } from "@/lib/utils";
 import { ChatList } from "@/components/chat-list";
-import { Message } from "ai";
+import { StoriesForm } from "@/components/stories-form";
 
-export default function SettingsAccountPage() {
-  // const [savedMessages, setSavedMessages] = useState<Message[]>([]);
-  const { messages, handleSubmit, isLoading, append } = useChat({
+export default function StoriesPage() {
+  const { messages, append, isLoading } = useChat({
     api: "/api/story",
   });
 
   const { formattedAnswer, answers, storyChat, setStoryChat } = useStore();
-  console.log("🚀 ~ file: stories.tsx:20 ~ formattedAnswer:", formattedAnswer);
+  const hasTriggeredChat = useRef(false);
 
   const handleTrigger = async () => {
     const id = nanoid();
-    // if (formattedAnswer.question9.length == 0) {
-    //   return;
-    // }
     const initialInput = `Here is my business idea's question answers in json format ${JSON.stringify(
       formattedAnswer,
     )}`;
-    // try {
     await append({
       id,
       content: initialInput,
       role: "user",
     });
   };
+
+  // First useEffect to handle initial trigger
   useEffect(() => {
     if (
-      messages.length == 0 &&
-      storyChat.length == 0 &&
-      answers.question1 != undefined
+      !hasTriggeredChat.current &&
+      storyChat.length === 0 &&
+      answers.question1 !== undefined
     ) {
-      console.log(
-        "🚀 ~ file: stories.tsx:43 ~ useEffect ~  formattedAnswer.question1:",
-        answers.question1,
-      );
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      hasTriggeredChat.current = true;
       handleTrigger();
-    } else if (messages.length > 0 && !isLoading) {
-      // setSavedMessages(filterMessagesByRole(messages, "assistant"));
-      setStoryChat(filterMessagesByRole(messages, "assistant"));
     }
-  }, [messages, isLoading, storyChat.length, formattedAnswer]);
+  }, [answers.question1, storyChat.length]);
+
+  // Second useEffect to handle message updates
+  useEffect(() => {
+    if (messages.length > 0 && !isLoading) {
+      const assistantMessages = filterMessagesByRole(messages, "assistant");
+      if (JSON.stringify(assistantMessages) !== JSON.stringify(storyChat)) {
+        setStoryChat(assistantMessages);
+      }
+    }
+  }, [messages, isLoading]);
+
+  const displayMessages =
+    messages.length === 0
+      ? storyChat
+      : filterMessagesByRole(messages, "assistant");
+
   return (
     <MainNavigation>
       <div className="space-y-6">
-        <ChatList
-          messages={
-            messages.length == 0
-              ? storyChat
-              : filterMessagesByRole(messages, "assistant")
-          }
-        />
-        {(messages.length !== 0 || storyChat.length !== 0) && !isLoading && (
-          <StoriesForm />
-        )}
+        <ChatList messages={displayMessages} />
+        {displayMessages.length > 0 && !isLoading && <StoriesForm />}
       </div>
     </MainNavigation>
   );

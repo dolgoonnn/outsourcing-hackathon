@@ -9,6 +9,7 @@ import { useStore } from "@/lib/form/store";
 export default function SettingsAccountPage() {
   const id = nanoid();
   const { formattedAnswer, answers, poChat, setPoChat } = useStore();
+  console.log("🚀 ~ SettingsAccountPage ~ poChat:", poChat);
   console.log(
     "🚀 ~ file: index.tsx:12 ~ SettingsAccountPage ~ answers:",
     answers,

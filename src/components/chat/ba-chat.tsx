@@ -1,20 +1,19 @@
 import { useChat, type Message } from "ai/react";
-
 import { cn } from "@/lib/utils";
 import { ChatList } from "@/components/chat-list";
 import { ChatPanel } from "@/components/chat-panel";
-// import { EmptyScreen } from '@/components/empty-screen'
 import { ChatScrollAnchor } from "@/components/chat-scroll-anchor";
-
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { filterMessagesByRole } from "@/lib/utils";
 
 export interface ChatProps extends React.ComponentProps<"div"> {
   initialMessages: Message[];
   id?: string;
   initialInput: string;
   agent?: string;
-  setBaChat: (poChat: Message[]) => void;
+  setBaChat: (baChat: Message[]) => void;
+  baChat: Message[];
 }
 
 export function BaChat({
@@ -24,7 +23,11 @@ export function BaChat({
   initialInput,
   agent,
   setBaChat,
+  baChat,
 }: ChatProps) {
+  // Add ref to track initial trigger
+  const hasTriggeredChat = useRef(false);
+
   const { messages, append, reload, stop, isLoading, input, setInput } =
     useChat({
       api: "/api/agents/ba",
@@ -40,6 +43,7 @@ export function BaChat({
         }
       },
     });
+
   const handleTrigger = async () => {
     await append({
       id,
@@ -47,39 +51,45 @@ export function BaChat({
       role: "user",
     });
   };
+
+  // First useEffect to handle initial trigger
   useEffect(() => {
-    setInput("");
-    if (messages.length == 0 && initialMessages.length == 0) {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    if (
+      !hasTriggeredChat.current &&
+      baChat.length === 0 &&
+      initialMessages.length === 0
+    ) {
+      hasTriggeredChat.current = true;
+      setInput("");
       handleTrigger();
-    } else if (messages.length > 0 && !isLoading) {
-      // setSavedMessages(filterMessagesByRole(messages, "assistant"));
-      setBaChat(messages);
     }
-  }, [messages, isLoading, initialMessages.length]);
-  const restOfMessages = messages.slice(1);
+  }, [baChat.length, initialMessages.length]);
+
+  // Second useEffect to handle message updates
+  useEffect(() => {
+    if (messages.length > 0 && !isLoading) {
+      const assistantMessages = filterMessagesByRole(messages, "assistant");
+      if (JSON.stringify(assistantMessages) !== JSON.stringify(baChat)) {
+        setBaChat(assistantMessages);
+      }
+    }
+  }, [messages, isLoading]);
+
+  // Get messages to display
+  const displayMessages =
+    messages.length === 0
+      ? baChat
+      : filterMessagesByRole(messages, "assistant");
+  const restOfMessages = displayMessages.slice(1);
+
   return (
     <>
       <div className={cn("pb-[250px] pt-4 md:pt-10", className)}>
-        {/* {messages.length ? ( */}
         <>
           <ChatList messages={restOfMessages} />
           <ChatScrollAnchor trackVisibility={isLoading} />
         </>
-        {/* // ) : (
-        //   <EmptyScreen setInput={setInput} />
-        // )} */}
       </div>
-      <ChatPanel
-        id={id}
-        isLoading={isLoading}
-        stop={stop}
-        append={append}
-        reload={reload}
-        messages={messages}
-        input={input}
-        setInput={setInput}
-      />
     </>
   );
 }

@@ -1,22 +1,21 @@
+import MainNavigation from "@/components/main-navigation";
+// import { Separator } from "@/components/ui/separator";
+import { BaForm } from "@/components/ba-form";
 
-import MainNavigation from "@/components/main-navigation"
-import { Separator } from "@/components/ui/separator"
-import { BaForm } from "@/components/ba-form"
-
-export default function SettingsAccountPage() {
+export default function BaQuestionsPage() {
   return (
     <MainNavigation>
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-medium">Account</h3>
-        <p className="text-sm text-muted-foreground">
-          Update your account settings. Set your preferred language and
-          timezone.
-        </p>
+      <div className="space-y-6">
+        {/* <div>
+          <h3 className="text-lg font-medium">Account</h3>
+          <p className="text-sm text-muted-foreground">
+            Update your account settings. Set your preferred language and
+            timezone.
+          </p>
+        </div> */}
+        {/* <Separator /> */}
+        <BaForm />
       </div>
-      <Separator />
-      <BaForm />
-    </div>
     </MainNavigation>
-  )
+  );
 }
