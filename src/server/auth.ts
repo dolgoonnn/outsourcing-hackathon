@@ -9,6 +9,7 @@ import DiscordProvider from "next-auth/providers/discord";
 import Credentials from "next-auth/providers/credentials";
 import { env } from "@/env.mjs";
 import { db } from "@/server/db";
+import { UserType } from "@/lib/db/enums";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -20,6 +21,7 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: DefaultSession["user"] & {
       id: string;
+      userType: UserType;
       // ...other properties
       // role: UserRole;
     };

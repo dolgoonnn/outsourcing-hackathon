@@ -34,7 +34,7 @@ export default function StoriesPage() {
       answers.question1 !== undefined
     ) {
       hasTriggeredChat.current = true;
-      handleTrigger();
+      void handleTrigger();
     }
   }, [answers.question1, storyChat.length]);
 

@@ -14,9 +14,11 @@ import {
   Lock,
 } from "lucide-react";
 import { useStore } from "@/lib/form/store";
+import { useRouter } from "next/router";
 
 const MainNavigation = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
+  const router = useRouter();
   const { answers, step, storyChat, baChat, saChat, poChat } = useStore();
 
   const navItems = [
@@ -183,7 +185,7 @@ const MainNavigation = ({ children }: { children: React.ReactNode }) => {
           {currentStepIndex > 0 && (
             <Button
               variant="outline"
-              onClick={() => window.history.back()}
+              onClick={() => router.back()}
               className="gap-2"
             >
               Previous Step
@@ -196,7 +198,7 @@ const MainNavigation = ({ children }: { children: React.ReactNode }) => {
                 onClick={() => {
                   const nextItem = navItems[currentStepIndex + 1];
                   if (nextItem) {
-                    window.location.href = nextItem.href;
+                    void router.push(nextItem.href); // Use router.push instead of window.location
                   }
                 }}
               >

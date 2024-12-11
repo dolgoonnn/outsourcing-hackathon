@@ -18,75 +18,79 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function SettingsAccountPage() {
-  const [savedMessages, setSavedMessages] = useState<Message[]>([]);
-  const [triggerCalled, setTriggerCalled] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [triggerCalled, setTriggerCalled] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [estimates, setEstimates] = useState<number[]>([]);
 
-  const [timeArray, setTimeArray] = useState<string[]>([]);
-  const { messages, handleSubmit, isLoading, append } = useChat({
+  const { messages, append, isLoading } = useChat({
     api: "/api/time",
+    onResponse(response) {
+      if (!response.ok) {
+        setError("Failed to get time estimation. Please try again.");
+      }
+    },
     async onFinish() {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setFinished(true);
     },
-
-    // onFinish(message) {
-    //   console.log("🚀 ~ file: budget.tsx:28 ~ onFinish ~ message:", message);
-    // },
   });
-  console.log("🚀 ~ file: budget.tsx:19 ~ messages:", messages);
 
-  const { formattedAnswer, storyChat, setStoryChat, answers } = useStore();
-  console.log(
-    "🚀 ~ file: budget.tsx:45 ~ SettingsAccountPage ~ formattedAnswer:",
-    formattedAnswer,
-  );
+  const { answers } = useStore();
+  const costPerUnitTime = 50000;
 
-  // console.log("🚀 ~ file: stories.tsx:20 ~ formattedAnswer:", formattedAnswer);
-
-  const handleTrigger = async (text: string) => {
+  const handleTrigger = async () => {
     const id = nanoid();
-    console.log("🚀 ~ file: budget.tsx:28 ~ handleTrigger ~ id:", id);
-    // if (formattedAnswer.question9.length == 0) {
-    //   return;
-    // }
+    setError(null);
 
-    await append({
-      id,
-      content: text,
-      role: "user",
-    });
-    setTriggerCalled(false);
+    try {
+      const prompt = `Given these user stories: ${JSON.stringify(
+        answers.question9,
+      )}, provide time estimates in hours as a JSON array of numbers. Only return the array, nothing else. Format example: [40, 20, 30]`;
+
+      await append({
+        id,
+        content: prompt,
+        role: "user",
+      });
+      setTriggerCalled(false);
+    } catch (err) {
+      setError("Failed to send request. Please try again.");
+    }
   };
 
   useEffect(() => {
     if (answers.question9 != undefined && !isLoading && !triggerCalled) {
-      // answers.question9.forEach((story) => {
       setTriggerCalled(true);
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      handleTrigger(
-        `Given the user story in string array: '${JSON.stringify(
-          answers.question9,
-        )}', estimate the time required to implement this user story and return int array. Dont return anything than array estimate`,
-      );
-      // });
-    } else if (answers.question9 === undefined || isLoading) {
-      setTriggerCalled(false);
+      void handleTrigger();
     }
-  }, [answers]);
+  }, [answers.question9, isLoading]);
 
-  const costPerUnitTime = 50000;
+  useEffect(() => {
+    if (messages.length > 0 && !isLoading) {
+      const assistantMessages = filterMessagesByRole(messages, "assistant");
+      if (assistantMessages.length > 0) {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          const parsed = JSON.parse(assistantMessages[0].content);
+          if (Array.isArray(parsed)) {
+            setEstimates(parsed);
+          }
+        } catch (err) {
+          setError("Invalid response format. Please try again.");
+        }
+      }
+    }
+  }, [messages, isLoading]);
 
-  let totalCost = 0;
-
-  function formatNumberWithCommas(number: number) {
-    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
-  }
+  const formatCost = (hours: number) => {
+    const cost = hours * costPerUnitTime;
+    return cost.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "'");
+  };
 
   const companies = [
     {
@@ -95,146 +99,172 @@ export default function SettingsAccountPage() {
       title: "Nasha tech",
       email: "sales@nashatech.com",
       description:
-        "As a forward-thinking technology company, we are committed to delivering high-quality software development services.",
+        "Forward-thinking technology company delivering high-quality software development services.",
+      rating: 4.8,
+      completedProjects: 150,
     },
     {
-      id: "1",
+      id: "2",
       imageUrl: "/og.png",
       email: "sales@tsashatech.com",
       title: "Tsasha tech",
       description:
-        "We are a dynamic, innovative and well-established company. Our goal is to create value for our clients by delivering cutting-edge solutions and services.",
+        "Dynamic, innovative company creating value through cutting-edge solutions and services.",
+      rating: 4.6,
+      completedProjects: 120,
     },
   ];
 
   return (
     <MainNavigation>
-      <div className="space-y-6">
-        <div className="py-8 text-2xl">Cost estimation</div>
-
-        {!isLoading ? (
-          finished &&
-          (() => {
-            const filteredMessages = filterMessagesByRole(
-              messages,
-              "assistant",
-            );
-
-            if (filteredMessages.length === 0) {
-              return null;
-            }
-
-            let contentArray = [];
-            try {
-              contentArray = JSON.parse(
-                filteredMessages[0].content,
-              ) as string[];
-            } catch (error) {
-              console.log("Error parsing content array:", error);
-              return null; // or handle the error as needed
-            }
-
-            if (!Array.isArray(contentArray)) {
-              return null;
-            }
-
-            const time = filteredMessages.length > 0 ? contentArray[0] : "";
-
-            const time2 = filteredMessages.length > 0 ? contentArray[1] : "";
-            const cost = parseInt(time) * costPerUnitTime;
-            const cost2 = parseInt(time2) * costPerUnitTime;
-            totalCost += cost;
-
-            return (
-              <div className="flex flex-col gap-8">
-                <Slider defaultValue={[28, 70]} />
-                <div className="grid grid-cols-10">
-                  <div className="col-start-3">
-                    <Badge>{formatNumberWithCommas(cost)}₮</Badge>
-                  </div>
-                  <div className="col-start-7">
-                    <Badge>{formatNumberWithCommas(cost2)}₮</Badge>
-                  </div>
+      <div className="space-y-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Cost Estimation</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <div className="flex items-center justify-center p-8">
+                <div className="flex flex-col items-center gap-4">
+                  <Icons.spinner className="h-8 w-8 animate-spin" />
+                  <p className="text-sm text-muted-foreground">
+                    Calculating estimates...
+                  </p>
                 </div>
               </div>
-            );
-          })()
-        ) : (
-          <div className="w-full h-[100px] flex items-center justify-center">
-            <div className="flex flex-col gap-4 justify-center items-center">
-              <Icons.spinner
-                className="w-8 h-8 md:mr-2 animate-spin "
-                aria-hidden="true"
-              />
-              <div>Loading</div>
-            </div>
-          </div>
-        )}
-        {!isLoading && (
-          <>
-            <div className="py-4 text-2xl">Suggested company</div>
+            ) : error ? (
+              <div className="flex flex-col items-center gap-4 p-8">
+                <Icons.alert className="h-8 w-8 text-destructive" />
+                <p className="text-sm text-destructive">{error}</p>
+                <Button onClick={() => handleTrigger()}>Retry</Button>
+              </div>
+            ) : (
+              estimates.length > 0 && (
+                <div className="space-y-6">
+                  {answers.question9?.map((story, index) => (
+                    <div key={index} className="space-y-2">
+                      <p className="text-sm font-medium">{story}</p>
+                      <div className="flex items-center gap-4">
+                        <Slider
+                          defaultValue={[estimates[index]]}
+                          max={100}
+                          step={1}
+                          className="flex-1"
+                        />
+                        <Badge
+                          variant="secondary"
+                          className="w-32 justify-center"
+                        >
+                          {formatCost(estimates[index])}₮
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="pt-4 border-t">
+                    <div className="flex justify-between">
+                      <span className="font-medium">Total Estimate:</span>
+                      <Badge variant="default" className="text-lg">
+                        {formatCost(estimates.reduce((a, b) => a + b, 0))}₮
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+              )
+            )}
+          </CardContent>
+        </Card>
 
-            <div className="grid grid-cols-2 gap-4">
-              {companies.map((card, index) => (
-                <CompanyCard key={index} cardData={card} />
-              ))}
-            </div>
-          </>
+        {!isLoading && estimates.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Recommended Companies</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-6 md:grid-cols-2">
+                {companies.map((company) => (
+                  <CompanyCard key={company.id} cardData={company} />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         )}
-        {/* <div className="w-full flex justify-start">
-          <div className="">Project Name: {answers.question1}</div>
-        </div> */}
       </div>
     </MainNavigation>
   );
 }
+
 type CardData = {
   id: string;
   imageUrl: string;
   title: string;
   description: string;
   email: string;
+  rating: number;
+  completedProjects: number;
 };
 
 function CompanyCard({ cardData }: { cardData: CardData }) {
-  const { imageUrl, title, description, id, email } = cardData;
-  return (
-    <div className="p-6 flex flex-col rounded-xl border border-slate-500 bg-slate-800 relative">
-      <Image
-        src={imageUrl}
-        height={64}
-        width={64}
-        alt="logo"
-        className="absolute top-12 left-4 "
-      />
-      <div className="h-[92px]"></div>
+  const { imageUrl, title, description, email, rating, completedProjects } =
+    cardData;
 
-      <div className="flex flex-col gap-4">
-        <div className="text-base text-bold">{title}</div>
-        <div className="text-sm text-slate-100">{description}</div>
-      </div>
-      <div className="pt-4">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button>Send</Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Send</DialogTitle>
-              <DialogDescription className="pt-4">
-                Company: {title}
-              </DialogDescription>
-              <DialogDescription className="pt-4">
-                Email: {email}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="py-4"></div>
-            <DialogFooter>
-              <Button type="submit">Send this info</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </div>
+  return (
+    <Card className="overflow-hidden">
+      <CardContent className="p-6">
+        <div className="flex items-start gap-4">
+          <Image
+            src={imageUrl}
+            height={64}
+            width={64}
+            alt={`${title} logo`}
+            className="rounded-lg"
+          />
+          <div className="flex-1 space-y-2">
+            <h3 className="font-semibold">{title}</h3>
+            <div className="flex items-center gap-2">
+              <Icons.star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+              <span className="text-sm">{rating}</span>
+              <span className="text-sm text-muted-foreground">
+                ({completedProjects} projects)
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground">{description}</p>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="w-full mt-4">Contact Company</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Contact {title}</DialogTitle>
+                  <DialogDescription className="space-y-2 pt-4">
+                    <p>Email: {email}</p>
+                    {/* <p>
+                      Project Budget:{" "}
+                      {formatCost(estimates?.reduce((a, b) => a + b, 0) || 0)}₮
+                    </p> */}
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button type="submit">Send Request</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
+
+// function formatCost(hours: number): string {
+//   // Calculate total cost from hours
+//   const cost = hours * costPerUnitTime;
+
+//   // Format with thousand separators and handle decimal places
+//   return new Intl.NumberFormat('en-US', {
+//     minimumFractionDigits: 0,
+//     maximumFractionDigits: 0,
+//     useGrouping: true,
+//   })
+//   .format(cost)
+//   .replace(/,/g, "'"); // Replace commas with apostrophes for the desired format
+// }

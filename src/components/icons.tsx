@@ -1,4 +1,5 @@
 import { AvatarIcon, ImageIcon } from "@radix-ui/react-icons";
+import { AlertTriangle, Star } from "lucide-react";
 
 type IconProps = React.HTMLAttributes<SVGElement>;
 
@@ -232,4 +233,6 @@ export const Icons = {
   ),
   avatar: AvatarIcon,
   placeholder: ImageIcon,
+  alert: AlertTriangle,
+  star: Star,
 };
