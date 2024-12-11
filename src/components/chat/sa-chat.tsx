@@ -1,13 +1,9 @@
 import { useChat, type Message } from "ai/react";
-
 import { cn } from "@/lib/utils";
 import { ChatList } from "@/components/chat-list";
-import { ChatPanel } from "@/components/chat-panel";
-// import { EmptyScreen } from '@/components/empty-screen'
 import { ChatScrollAnchor } from "@/components/chat-scroll-anchor";
-
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Mermaid } from "@/components/mermaid";
 
 export interface ChatProps extends React.ComponentProps<"div"> {
@@ -15,7 +11,7 @@ export interface ChatProps extends React.ComponentProps<"div"> {
   id?: string;
   initialInput: string;
   agent?: string;
-  setSaChat: (poChat: Message[]) => void;
+  setSaChat: (saChat: Message[]) => void;
 }
 
 export function SaChat({
@@ -26,6 +22,9 @@ export function SaChat({
   agent,
   setSaChat,
 }: ChatProps) {
+  // Add ref to track initial trigger
+  const initialTriggerFired = useRef(false);
+
   const { messages, append, reload, stop, isLoading, input, setInput } =
     useChat({
       api: "/api/agents/sa",
@@ -41,6 +40,7 @@ export function SaChat({
         }
       },
     });
+
   const handleTrigger = async () => {
     await append({
       id,
@@ -48,43 +48,41 @@ export function SaChat({
       role: "user",
     });
   };
+
   useEffect(() => {
     setInput("");
-    if (messages.length == 0 && initialMessages.length == 0) {
+
+    // Only trigger initial message if it hasn't been fired and there are no messages
+    if (
+      !initialTriggerFired.current &&
+      messages.length === 0 &&
+      initialMessages.length === 0
+    ) {
+      initialTriggerFired.current = true;
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       handleTrigger();
-    } else if (messages.length > 0 && !isLoading) {
-      // setSavedMessages(filterMessagesByRole(messages, "assistant"));
+    }
+    // Only update messages when they've loaded and aren't empty
+    else if (messages.length > 0 && !isLoading) {
       setSaChat(messages);
     }
-  }, [messages, isLoading, initialMessages.length]);
+  }, [messages, isLoading, initialMessages.length, setSaChat]);
+
+  // Get messages after the first one
   const restOfMessages = messages.slice(1);
+
   return (
     <>
       <div className={cn("pb-[250px] pt-4 md:pt-10", className)}>
-        {/* {messages.length ? ( */}
         <>
           <ChatList messages={restOfMessages} />
           <ChatScrollAnchor trackVisibility={isLoading} />
         </>
-        {/* // ) : (
-        //   <EmptyScreen setInput={setInput} />
-        // )} */}
+        {/* Only render Mermaid chart when messages are loaded and not empty */}
         {!isLoading && messages.length > 0 && (
           <Mermaid chart={restOfMessages[0]?.content} />
         )}
       </div>
-
-      {/* <ChatPanel
-        id={id}
-        isLoading={isLoading}
-        stop={stop}
-        append={append}
-        reload={reload}
-        messages={messages}
-        input={input}
-        setInput={setInput}
-      /> */}
     </>
   );
 }

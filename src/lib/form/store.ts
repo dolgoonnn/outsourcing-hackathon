@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Message } from "ai";
+import { type Message } from "ai";
 
 type Answers = {
   question1?: string;
